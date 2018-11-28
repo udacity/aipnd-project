@@ -36,7 +36,7 @@ power = pa.gpu
 epochs = pa.epochs
 
 
-trainloader, v_loader, testloader = nn_helper.load_data(where)
+trainloader, v_loader, testloader, train_data,validation_data,test_data  = nn_helper.load_data(where)
 
 
 model, optimizer, criterion = nn_helper.nn_setup(structure,dropout,hidden_layer1,lr,power)
@@ -45,7 +45,7 @@ model, optimizer, criterion = nn_helper.nn_setup(structure,dropout,hidden_layer1
 nn_helper.train_network(model, optimizer, criterion, epochs, 20, trainloader, power)
 
 
-nn_helper.save_checkpoint(path,structure,hidden_layer1,dropout,lr)
+nn_helper.save_checkpoint(model,train_data,path,structure,hidden_layer1,dropout,lr)
 
 
 print("All Set and Done. The Model is trained") # Coffee timeee

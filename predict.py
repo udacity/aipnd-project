@@ -14,7 +14,7 @@ import PIL
 from PIL import Image
 import argparse
 
-import futils
+import nn_helper
 
 #Command Line Arguments
 
@@ -35,17 +35,17 @@ path = pa.checkpoint
 
 
 
-training_loader, testing_loader, validation_loader = futils.load_data()
+training_loader, testing_loader, validation_loader = nn_helper.load_data()
 
 
-futils.load_checkpoint(path)
+nn_helper.load_checkpoint(path)
 
 
 with open('cat_to_name.json', 'r') as json_file:
     cat_to_name = json.load(json_file)
 
 
-probabilities = futils.predict(path_image, model, number_of_outputs, power)
+probabilities = nn_helper.predict(path_image, model, number_of_outputs, power)
 
 
 labels = [cat_to_name[str(index + 1)] for index in np.array(probabilities[1][0])]

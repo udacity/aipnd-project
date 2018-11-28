@@ -73,7 +73,7 @@ def load_data(where  = "./flowers" ):
 
 
 
-    return trainloader , vloader, testloader
+    return trainloader , vloader, testloader, train_data, validation_data,test_data
 
 
 def nn_setup(structure='densenet121',dropout=0.5, hidden_layer1 = 120,lr = 0.001,power='gpu'):
@@ -188,7 +188,7 @@ def train_network(model, criterion, optimizer, epochs = 3, print_every=20, loade
     print("That's a lot of steps")
 
 
-def save_checkpoint(path='checkpoint.pth',structure ='densenet121', hidden_layer1=120,dropout=0.5,lr=0.001,epochs=12):
+def save_checkpoint(model,train_data,path='checkpoint.pth',structure ='densenet121', hidden_layer1=120,dropout=0.5,lr=0.001,epochs=12):
     '''
     Arguments: The saving path and the hyperparameters of the network
     Returns: Nothing
