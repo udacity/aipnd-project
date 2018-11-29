@@ -11,9 +11,10 @@ from torchvision import datasets, transforms
 import torchvision.models as models
 import argparse
 
-import nn_helper
+# this is the helper file I created
+import nn_helper 
 
-ap = argparse.ArgumentParser(description='Train.py')
+ap = argparse.ArgumentParser(description='train.py')
 # Command Line ardguments
 
 ap.add_argument('data_dir', nargs='*', action="store", default="./flowers/")
@@ -24,6 +25,7 @@ ap.add_argument('--dropout', dest = "dropout", action = "store", default = 0.5)
 ap.add_argument('--epochs', dest="epochs", action="store", type=int, default=1)
 ap.add_argument('--arch', dest="arch", action="store", default="vgg16", type = str)
 ap.add_argument('--hidden_units', type=int, dest="hidden_units", action="store", default=120)
+ap.add_argument('--display_freq', type=int, dest="display_freq", action="store", default=20)
 
 pa = ap.parse_args()
 where = pa.data_dir
@@ -34,18 +36,19 @@ dropout = pa.dropout
 hidden_layer1 = pa.hidden_units
 power = pa.gpu
 epochs = pa.epochs
+display_freq = pa.display_freq
 
 
-trainloader, v_loader, testloader, train_data,validation_data,test_data  = nn_helper.load_data(where)
+trainloader, v_loader, testloader, train_data,validation_data,test_data  = nn_helper.load_and_tranform_data(where)
 
 
-model, optimizer, criterion = nn_helper.nn_setup(structure,dropout,hidden_layer1,lr,power)
+model, optimizer, criterion = nn_helper.build(structure,dropout,hidden_layer1,lr,power)
 
+# train the neural network
+nn_helper.train(model, optimizer, criterion, epochs, display_freq, trainloader, power)
 
-nn_helper.train_network(model, optimizer, criterion, epochs, 20, trainloader, power)
-
-
+#save the check point
 nn_helper.save_checkpoint(model,train_data,path,structure,hidden_layer1,dropout,lr)
 
 
-print("All Set and Done. The Model is trained") # Coffee timeee
+print("Training is completed !") 
