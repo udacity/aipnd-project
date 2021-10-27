@@ -104,3 +104,6 @@ ENV/
 
 #data folder
 data/
+
+# any pth file
+*.pth 
