@@ -137,3 +137,32 @@ def cross_entropy(Y, P):
     Y = np.float_(Y)
     P = np.float_(P)
     return -np.sum(Y * np.log(P) + (1 - Y) * np.log(1 - P))
+    
+    
+# -------------------- Gradient Descent --------------------
+
+# Sigmoid Activation Function ( Integral of log(e^x + 1) + C )
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+# Output (prediction) formula
+def output_formula(features, weights, bias):
+    linear_combination=np.dot(features, weights)
+    return sigmoid(linear_combination + bias)
+
+# Error Formula (Binary Cross-Entropy / Log Loss)
+# y = probability
+def error_formula(y, output):
+    porbability_of_1 = - y * np.log(output)
+    probability_of_0 = - (1 - y) * np.log(1-output)
+    binary_cross_entropy = porbability_of_1 + probability_of_0
+    return binary_cross_entropy
+
+# Gradient descent step
+def update_weights(x, y, weights, bias, learnrate):
+    output = output_formula(x, weights, bias)
+    d_error = -(y - output)
+    weights -= learnrate * d_error * x
+    bias -= learnrate * d_error
+    return weights, bias
+    
