@@ -101,3 +101,7 @@ ENV/
 .mypy_cache/
 
 .github/**
+
+# AssetImages
+assets/flower_data
+
