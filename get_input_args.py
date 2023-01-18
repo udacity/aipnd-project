@@ -42,7 +42,7 @@ def get_predict_input_args():
 
     # Creates command line arguments args.dir for path to images files, 
     # and checkpoint files
-    parser.add_argument("--image_location", type=str, default="assets/valid/4/image_05638.jpg"
+    parser.add_argument("--image_location", type=str, default="assets/flower_data/valid/4/image_05638.jpg"
     ,help="path to image file for read in")
     parser.add_argument("--checkpoint_file", type=str, default=os.getcwd() + "/checkpoint.pth", 
                         help="path to checkpoint folder")

@@ -158,7 +158,8 @@ def main():
 
     # define the checkpoint 
     checkpoint = {
-        'arch': model,
+        'arch': arch,
+        'model': model,
         'epochs': epochs,
         'dropout': 0.5,
         'classifier': classifier,

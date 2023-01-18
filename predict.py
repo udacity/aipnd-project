@@ -67,8 +67,6 @@ def main():
     # load up the checkpoint model
     model = load_checkpoint_model(checkpoint_file)
     
-    # provide user feedback
-    print("Checkpoint Loaded")
     print("Beginning Prediction...")
     
     ps, tclass = predict_model(image_location, model, topk, device)
