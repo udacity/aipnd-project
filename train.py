@@ -15,9 +15,9 @@
 #
 # Use argparse Expected Call with <> indicating expected user input:
 #      python train.py --dir <directory with images> --arch <model>
-#             --learning_rate <learning rate for the model>  --hidden_units <hidden units for the model> --epochs <epochsfor the model>
+#             --learning_rate <learning rate for the model>  --hidden_units <hidden units for the model> --epochs <epochsfor the model> --gpu <add it by itself for true>
 #   Example call:
-#    python train.py --dir assets/flower_data/ --arch vgg16 --learning_rate 0.0001 --hidden_units 2048 --epochs 1
+#    python train.py --data_dir assets/flower_data/ --arch vgg16 --learning_rate 0.0001 --hidden_units 2048 --epochs 1 --gpu 
 ##
 
 # Imports python modules
@@ -29,18 +29,17 @@ from torch import optim
 from collections import OrderedDict
 
 # Imports functions created for this program
-from get_input_args import get_input_args
+import globals
+from get_input_args import get_train_input_args
 from train_model import train_model
+
+#load up globals
+#globals()
 
 # Main program function defined below
 def main():
 # Setup some constants
-    ROTATION_AMOUNT = 30
-    CROP_AMOUNT = 224
-    RESIZE_AMOUNT = 225
-    COLOR_CHANNEL_1 = 0.485, 0.456, 0.406
-    COLOR_CHANNEL_2 = 0.229, 0.224, 0.225
-    BATCH_SIZE = 64
+
 
     # Measures total program runtime by collecting start time
     start_time = time()
@@ -52,7 +51,7 @@ def main():
     # the user running the program from a terminal window. This function returns
     # the collection of these command line arguments from the function call as
     # the variable in_arg
-    in_arg = get_input_args()
+    in_arg = get_train_input_args()
     
     # Retrieve and assign in_arg properties
     data_dir = in_arg.data_dir
@@ -64,8 +63,8 @@ def main():
     hidden_units = in_arg.hidden_units
     
     # Set the training and vailidation dirs the folder directory
-    train_dir = data_dir + '/train'
-    valid_dir = data_dir + '/valid'
+    train_dir = data_dir + "/train"
+    valid_dir = data_dir + "/valid"
 
     if in_arg is None:
         print("* Doesn't Check the Command Line Arguments because 'get_input_args' hasn't been defined.")
@@ -80,18 +79,18 @@ def main():
 
         
     # Define the transforms for the training and validation sets
-    train_transforms = transforms.Compose([transforms.RandomRotation(ROTATION_AMOUNT),
-                                       transforms.RandomResizedCrop(CROP_AMOUNT),
+    train_transforms = transforms.Compose([transforms.RandomRotation(globals.ROTATION_AMOUNT),
+                                       transforms.RandomResizedCrop(globals.CROP_AMOUNT),
                                        transforms.RandomHorizontalFlip(),
                                        transforms.ToTensor(),
-                                       transforms.Normalize(COLOR_CHANNEL_1,
-                                       COLOR_CHANNEL_2)])
+                                       transforms.Normalize(globals.COLOR_CHANNEL_1,
+                                       globals.COLOR_CHANNEL_2)])
 
-    valid_transforms = transforms.Compose([transforms.Resize(RESIZE_AMOUNT),
-                                      transforms.CenterCrop(CROP_AMOUNT),
+    valid_transforms = transforms.Compose([transforms.Resize(globals.RESIZE_AMOUNT),
+                                      transforms.CenterCrop(globals.CROP_AMOUNT),
                                       transforms.ToTensor(),
-                                      transforms.Normalize(COLOR_CHANNEL_1,
-                                      COLOR_CHANNEL_2)])                                
+                                      transforms.Normalize(globals.COLOR_CHANNEL_1,
+                                      globals.COLOR_CHANNEL_2)])                                
     
     # Load the datasets with ImageFoldeR
     # Pass transforms in here, then run the next cell to see how the transforms look
@@ -99,8 +98,8 @@ def main():
     image_valid_dataset = datasets.ImageFolder(valid_dir, transform=valid_transforms)
     
     # TODO: Using the image datasets and the trainforms, define the dataloaders
-    train_dataloader = torch.utils.data.DataLoader(image_train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    valid_dataloader = torch.utils.data.DataLoader(image_valid_dataset, batch_size=BATCH_SIZE)
+    train_dataloader = torch.utils.data.DataLoader(image_train_dataset, batch_size=globals.BATCH_SIZE, shuffle=True)
+    valid_dataloader = torch.utils.data.DataLoader(image_valid_dataset, batch_size=globals.BATCH_SIZE)
     
     # labels list json script
     import json
@@ -142,7 +141,7 @@ def main():
         optimizer = optim.Adam(model.classifier.parameters(), lr=learning_rate)
 
     else:
-        print('Please input either "resnet50" or "vgg16"')
+        print("Please input either \"resnet50\" or \"vgg16\"")
         
     # Freeze our feature paramaters - turn of gradients for our model
     for param in model.parameters():
@@ -152,7 +151,7 @@ def main():
     criterion = nn.NLLLoss()
 
     # light 'em up    
-    print('Training starting!!!:  ') 
+    print("Training starting!!!:  ") 
     
     # launch train_model func 
     train_model(model, epochs, device, criterion, optimizer, train_dataloader, valid_dataloader)
@@ -162,16 +161,17 @@ def main():
         'arch': model,
         'epochs': epochs,
         'dropout': 0.5,
+        'classifier': classifier,
         'hidden_layers': hidden_units,
         'optimizer_state_dict': optimizer.state_dict,
         'class_to_idx': image_train_dataset.class_to_idx,
         'state_dict': model.state_dict()}
 
     # save the checkpoint    
-    torch.save(checkpoint, save_dir + '/' + 'checkpoint.pth')
+    torch.save(checkpoint, save_dir + "/" + "checkpoint.pth")
         
     #display message to user
-    print('Training complete checkpoint save to path:{}'.format(save_dir+'/' + 'checkpoint.pth'))
+    print("Training complete, checkpoint file saved to:{}".format(save_dir+"/" + "checkpoint.pth"))
         
     # Measure total program runtime by collecting end time
     end_time = time()

@@ -13,9 +13,9 @@ def train_model(model, epochs, this_device, criterion, optimizer, train_dataload
  running_loss = 0
 
 # work out available architecture
- this_arch = 'cpu'
+ this_arch = "cpu"
  if this_device:
-    this_arch = 'gpu'
+    this_arch = "gpu"
 
 # NB// by default, the model is set to "training" mode
  for epoch in range(epochs):
@@ -62,9 +62,9 @@ def train_model(model, epochs, this_device, criterion, optimizer, train_dataload
                     equals = top_class == labels.view(*top_class.shape)
                     accuracy += torch.mean(equals.type(torch.FloatTensor)).item()
                     
-            print(f'Epoch {epoch+1}/{epochs}.. '
-                  f'Train loss: {running_loss/print_every:.3f}.. '
-                  f'Validation loss: {validation_loss/len(valid_dataloader):.3f}.. '
-                  f'Test accuracy: {accuracy/len(valid_dataloader):.3f}')
+            print(f"Epoch {epoch+1}/{epochs}.. "
+                  f"Train loss: {running_loss/print_every:.3f}.. "
+                  f"Validation loss: {validation_loss/len(valid_dataloader):.3f}.. "
+                  f"Test accuracy: {accuracy/len(valid_dataloader):.3f}")
             running_loss = 0
             model.train()
