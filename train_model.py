@@ -6,8 +6,7 @@
 import torch
 
 def train_model(model, epochs, this_device, criterion, optimizer, train_dataloader, valid_dataloader):
-# Train and Validate the Model
-#epochs = EPOCHS
+# train and Validate the Model
  steps = 0
  print_every = 5
  running_loss = 0
@@ -17,7 +16,7 @@ def train_model(model, epochs, this_device, criterion, optimizer, train_dataload
  if this_device:
     this_arch = "gpu"
 
-# NB// by default, the model is set to "training" mode
+# by default, the model is set to "training" mode
  for epoch in range(epochs):
     for inputs, labels in train_dataloader:
         steps += 1
@@ -43,7 +42,7 @@ def train_model(model, epochs, this_device, criterion, optimizer, train_dataload
         running_loss += loss.item()
         
         if steps % print_every == 0:
-            # Keep track of training and validation loss
+            # keep track of training and validation loss and accuracy
             validation_loss = 0
             accuracy = 0
             model.eval()
@@ -66,5 +65,6 @@ def train_model(model, epochs, this_device, criterion, optimizer, train_dataload
                   f"Train loss: {running_loss/print_every:.3f}.. "
                   f"Validation loss: {validation_loss/len(valid_dataloader):.3f}.. "
                   f"Test accuracy: {accuracy/len(valid_dataloader):.3f}")
+            
             running_loss = 0
             model.train()

@@ -4,12 +4,14 @@
 # PURPOSE: define imput args
 #
 ##
+
 # Imports python modules
 import argparse
 import os
 
 def get_train_input_args():
-    # Creates parse 
+    
+    # setup parser
     parser = argparse.ArgumentParser()
 
     # Creates command line arguments args.dir for path to images files, 
@@ -37,7 +39,8 @@ def get_train_input_args():
 
 
 def get_predict_input_args():
-    # Creates parse 
+
+    # setup parser
     parser = argparse.ArgumentParser()
 
     # Creates command line arguments args.dir for path to images files, 

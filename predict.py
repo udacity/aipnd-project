@@ -19,23 +19,25 @@
 #                           --topk 5  --category_names cat_to_name.json --gpu
 ##
 
-# Imports python modules
+# imports python modules
 from time import time, sleep
 import json
 
-# Imports functions created for this program
+# imports functions created for this program
 from get_input_args import get_predict_input_args
 from load_checkpoint_model import load_checkpoint_model
 from predict_model import predict_model
 
-# Main program function defined below
+# main program function defined below
 def main():
-    # TODO 0: Measures total program runtime by collecting start time
+    
+    # measures total program runtime by collecting start time
     start_time = time()
-    # Replace sleep(75) below with code you want to time
+    
+    # replace sleep(75) below with code you want to time
     sleep(1)
     
-    # TODO 1: Define get_input_args function within the file get_input_args.py
+    # Define get_input_args function within the file get_input_args.py
     # This function retrieves 3 Command Line Arugments from user as input from
     # the user running the program from a terminal window. This function returns
     # the collection of these command line arguments from the function call as
@@ -61,14 +63,13 @@ def main():
 
     # grab device from input arg  
     device = "cpu"
-    if in_arg.gpu:        
+    if gpu:
         device = "gpu"
 
     # load up the checkpoint model
     model = load_checkpoint_model(checkpoint_file)
     
     print("Beginning Prediction...")
-    
     ps, tclass = predict_model(image_location, model, topk, device)
 
     with open(category_names, "r") as f:
@@ -86,15 +87,15 @@ def main():
             print("Class: {flower_class}".format(flower_class= tclass[idx]))
             print("Probability: {flower_ps:.2f}%".format(flower_ps=ps[idx] * 100))
     
-    # Measure total program runtime by collecting end time
+    # measure total program runtime by collecting end time
     end_time = time()
     
-    # Computes overall runtime in seconds & prints it in hh:mm:ss format
+    # computes overall runtime in seconds & prints it in hh:mm:ss format
     tot_time = end_time - start_time
     print("\n** Total Elapsed Runtime:",
           str(int((tot_time/3600)))+":"+str(int((tot_time%3600)/60))+":"
           +str(int((tot_time%3600)%60)) )
 
-# Call to main function to run the program
+# call to main function to run the program
 if __name__ == "__main__":
     main()

@@ -28,6 +28,7 @@ def predict_model(image_path, model, topk, this_device):
     image = image.to(this_device).unsqueeze(0)
 
     with torch.no_grad():
+        
         # extract the top-k value-indices
         output = model.forward(image)
         topk ,topk_labels = torch.topk(output, topk)

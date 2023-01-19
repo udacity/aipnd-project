@@ -7,10 +7,11 @@ import torch
 from torchvision import models
 
 def load_checkpoint_model(path):
+
     # load the checkpoint
     checkpoint = torch.load(path)
  
-    #load up the checkpoint model
+    # load up the checkpoint model
     checkpoint_model  = checkpoint['model']
   
     # freeze the parameters

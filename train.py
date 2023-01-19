@@ -20,7 +20,7 @@
 #    python train.py --data_dir assets/flower_data/ --arch vgg16 --learning_rate 0.0001 --hidden_units 2048 --epochs 1 --gpu 
 ##
 
-# Imports python modules
+# imports python modules
 from time import time, sleep
 from torchvision import datasets, transforms, models
 import torch
@@ -28,22 +28,20 @@ from torch import nn
 from torch import optim
 from collections import OrderedDict
 
-# Imports functions created for this program
+
+# import globals
 import globals
+
+# import functions created for this program
 from get_input_args import get_train_input_args
 from train_model import train_model
 
-#load up globals
-#globals()
 
-# Main program function defined below
+# main program function defined below
 def main():
-# Setup some constants
-
-
-    # Measures total program runtime by collecting start time
+    # measures total program runtime by collecting start time
     start_time = time()
-    # Replace sleep(75) below with code you want to time
+    # replace sleep(75) below with code you want to time
     sleep(1)
     
     # Define get_input_args function within the file get_input_args.py
@@ -53,7 +51,7 @@ def main():
     # the variable in_arg
     in_arg = get_train_input_args()
     
-    # Retrieve and assign in_arg properties
+    # retrieve and assign in_arg properties
     data_dir = in_arg.data_dir
     arch = in_arg.arch
     device = in_arg.gpu
@@ -62,7 +60,7 @@ def main():
     learning_rate = in_arg.learning_rate
     hidden_units = in_arg.hidden_units
     
-    # Set the training and vailidation dirs the folder directory
+    # set the training and vailidation dirs the folder directory
     train_dir = data_dir + "/train"
     valid_dir = data_dir + "/valid"
 
@@ -76,9 +74,8 @@ def main():
                 "\n   arch =", in_arg.arch,    
                 "\n   learning_rate =", in_arg.learning_rate, 
                 "\n   gpu =", in_arg.gpu)
-
         
-    # Define the transforms for the training and validation sets
+    # define the transforms for the training and validation sets
     train_transforms = transforms.Compose([transforms.RandomRotation(globals.ROTATION_AMOUNT),
                                        transforms.RandomResizedCrop(globals.CROP_AMOUNT),
                                        transforms.RandomHorizontalFlip(),
@@ -92,12 +89,12 @@ def main():
                                       transforms.Normalize(globals.COLOR_CHANNEL_1,
                                       globals.COLOR_CHANNEL_2)])                                
     
-    # Load the datasets with ImageFoldeR
-    # Pass transforms in here, then run the next cell to see how the transforms look
+    # load the datasets with ImageFoldeR
+    # pass transforms in here, then run the next cell to see how the transforms look
     image_train_dataset = datasets.ImageFolder(train_dir, transform=train_transforms)
     image_valid_dataset = datasets.ImageFolder(valid_dir, transform=valid_transforms)
     
-    # TODO: Using the image datasets and the trainforms, define the dataloaders
+    # using the image datasets and the trainforms, define the dataloaders
     train_dataloader = torch.utils.data.DataLoader(image_train_dataset, batch_size=globals.BATCH_SIZE, shuffle=True)
     valid_dataloader = torch.utils.data.DataLoader(image_valid_dataset, batch_size=globals.BATCH_SIZE)
     
@@ -141,29 +138,30 @@ def main():
         optimizer = optim.Adam(model.classifier.parameters(), lr=learning_rate)
 
     else:
+        # only two models supported (so far!)
         print("Please input either \"resnet50\" or \"vgg16\"")
         
-    # Freeze our feature paramaters - turn of gradients for our model
+    # freeze our feature paramaters - turn of gradients for our model
     for param in model.parameters():
         param.require_grad = False
     
     # specify loss function (categorical cross-entropy)
     criterion = nn.NLLLoss()
 
-    # light 'em up    
+    # light 'em up
     print("Training starting!!!:  ") 
     
-    # launch train_model func 
+    # launch train_model func
     train_model(model, epochs, device, criterion, optimizer, train_dataloader, valid_dataloader)
 
     # define the checkpoint 
     checkpoint = {
         'arch': arch,
         'model': model,
-        'epochs': epochs,
-        'dropout': 0.5,
+        #'epochs': epochs,
+        # 'dropout': 0.5,
         'classifier': classifier,
-        'hidden_layers': hidden_units,
+        #'hidden_layers': hidden_units,
         'optimizer_state_dict': optimizer.state_dict,
         'class_to_idx': image_train_dataset.class_to_idx,
         'state_dict': model.state_dict()}
@@ -171,18 +169,18 @@ def main():
     # save the checkpoint    
     torch.save(checkpoint, save_dir + "/" + "checkpoint.pth")
         
-    #display message to user
+    # display message to user
     print("Training complete, checkpoint file saved to:{}".format(save_dir+"/" + "checkpoint.pth"))
         
-    # Measure total program runtime by collecting end time
+    # measure total program runtime by collecting end time
     end_time = time()
     
-    # Computes overall runtime in seconds & prints it in hh:mm:ss format
+    # computes overall runtime in seconds & prints it in hh:mm:ss format
     tot_time = end_time - start_time
     print("\n** Total Elapsed Runtime:",
           str(int((tot_time/3600)))+":"+str(int((tot_time%3600)/60))+":"
           +str(int((tot_time%3600)%60)) )
     
-# Call to main function to run the program
+# call to main function to run the program
 if __name__ == "__main__":
     main()
