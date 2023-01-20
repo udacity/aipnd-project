@@ -1,23 +1,26 @@
 # PROGRAMMER: John Paul Hunter
 # DATE CREATED: Wednesday, January 18, 2023                                 
-# REVISED DATE: 
+# REVISED DATE: Friday, January 20, 2023
 # PURPOSE: Predicting classes - 
 #          The predict.py script successfully reads in an image and a checkpoint then 
-#          prints the most likely image class and it's associated probability *
+#          prints the most likely image class and it's associated probability
 #          Top K classes -
-#          The predict.py script allows users to print out the top K classes along with associated probabilities *
+#          The predict.py script allows users to print out the top K classes along with associated probabilities
 #          Displaying class names -
-#          The predict.py script allows users to load a JSON file that maps the class values to other category names *
+#          The predict.py script allows users to load a JSON file that maps the class values to other category names
 #          Predicting with GPU -
-#          The predict.py script allows users to use the GPU to calculate the predictions *
+#          The predict.py script allows users to use the GPU to calculate the predictions
 
 # Use argparse Expected Call with <> indicating expected user input:
-#      python predict.py --image_location <location of image to test> --checkpoint_file <path to checkpoint file>
-#             --topk <how many top-k predictions>  --category_names <load a JSON file that maps the class values to other category names> 
-#   Example call:
-#    python predict.py --image_location assets/flower_data/valid/1/image_06739.jpg --checkpoint_file checkpoint.pth 
-#                           --topk 5  --category_names cat_to_name.json --gpu
-##
+#   2. Predict
+#   Predict flower name from an image with predict.py along with the probability of that name. That is, you'll pass in a single image /path/to/image and return the flower name and class probability.
+#
+#   Basic usage: python predict.py assets/flower_data/valid/1/image_06739.jpg checkpoint.pth 
+#   Options:
+#   Return top K most likely classes: python predict.py assets/flower_data/valid/1/image_06739.jpg checkpoint.pth --top_k 3
+#   Use a mapping of categories to real names: 
+#               python predict.py assets/flower_data/valid/1/image_06739.jpg checkpoint.pth --category_names cat_to_name.json
+#   Use GPU for inference: python predict.py assets/flower_data/valid/1/image_06739.jpg checkpoint.pth --gpu
 
 # imports python modules
 from time import time, sleep
@@ -44,33 +47,34 @@ def main():
     # the variable in_arg
     in_arg = get_predict_input_args()
 
-    image_location = in_arg.image_location
-    checkpoint_file = in_arg.checkpoint_file
-    gpu = in_arg.gpu
-    topk = in_arg.topk
+    input = in_arg.input
+    checkpoint = in_arg.checkpoint
+    top_k = in_arg.top_k
     category_names = in_arg.category_names
+    gpu = in_arg.gpu
 
     if in_arg is None:
         print("* Doesn't Check the Command Line Arguments because 'get_input_args' hasn't been defined.")
     else:
         # prints command line agrs
         print("Command Line Arguments:",
-                "\n   image_location =", in_arg.image_location,
-                "\n   checkpoint_file =", in_arg.checkpoint_file,
-                "\n   gpu =", in_arg.gpu,    
-                "\n   topk =", in_arg.topk, 
-                "\n   category_names =", in_arg.category_names)
+                "\n   image_location =", in_arg.input,
+                "\n   checkpoint_file =", in_arg.checkpoint,  
+                "\n   top_k =", in_arg.top_k, 
+                "\n   category_names =", in_arg.category_names,
+                 "\n  gpu =", in_arg.gpu,  )
 
     # grab device from input arg  
     device = "cpu"
     if gpu:
-        device = "gpu"
+        device = "cuda"
 
     # load up the checkpoint model
-    model = load_checkpoint_model(checkpoint_file)
+    model = load_checkpoint_model(checkpoint)
     
     print("Beginning Prediction...")
-    ps, tclass = predict_model(image_location, model, topk, device)
+    print("device!:  "+ device) 
+    ps, tclass = predict_model(input, model, top_k, device)
 
     with open(category_names, "r") as f:
         # get category names from json
@@ -81,7 +85,7 @@ def main():
         print("Class: {}".format(tclass[0]))
         print("Probability: {:.2f}%".format(ps[0] * 100))
         
-        print("Topk:")
+        print("Top_k:")
         for idx, i in enumerate(tclass):
             print("Name: {flower_name}".format(flower_name=cat_to_name[tclass[idx]]))
             print("Class: {flower_class}".format(flower_class= tclass[idx]))

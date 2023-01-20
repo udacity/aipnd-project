@@ -1,27 +1,22 @@
 # PROGRAMMER: John Paul Hunter
 # DATE CREATED: Monday, January 16, 2023                                   
-# REVISED DATE: 
+# REVISED DATE: Friday, January 20, 2023
 # PURPOSE: train the model
 
 import torch
 
-def train_model(model, epochs, this_device, criterion, optimizer, train_dataloader, valid_dataloader):
+def train_model(model, epochs, device, criterion, optimizer, train_dataloader, valid_dataloader):
 # train and Validate the Model
  steps = 0
  print_every = 5
  running_loss = 0
-
-# work out available architecture
- this_arch = "cpu"
- if this_device:
-    this_arch = "gpu"
 
 # by default, the model is set to "training" mode
  for epoch in range(epochs):
     for inputs, labels in train_dataloader:
         steps += 1
         # move the input and label tensors to this device (cpu or gpu if available)
-        inputs, labels = inputs.to(this_arch), labels.to(this_arch)
+        inputs, labels = inputs.to(device), labels.to(device)
         
         # get log probabilities from our model and pass in images
         logps = model.forward(inputs)
@@ -48,7 +43,7 @@ def train_model(model, epochs, this_device, criterion, optimizer, train_dataload
             model.eval()
             with torch.no_grad():
                 for inputs, labels in valid_dataloader:
-                    inputs, labels = inputs.to(this_arch), labels.to(this_arch)
+                    inputs, labels = inputs.to(device), labels.to(device)
                     logps = model.forward(inputs)
                     
                     # update loss metrics
@@ -64,7 +59,7 @@ def train_model(model, epochs, this_device, criterion, optimizer, train_dataload
             print(f"Epoch {epoch+1}/{epochs}.. "
                   f"Train loss: {running_loss/print_every:.3f}.. "
                   f"Validation loss: {validation_loss/len(valid_dataloader):.3f}.. "
-                  f"Test accuracy: {accuracy/len(valid_dataloader):.3f}")
+                  f"Validation accuracy: {accuracy/len(valid_dataloader):.3f}")
             
             running_loss = 0
             model.train()

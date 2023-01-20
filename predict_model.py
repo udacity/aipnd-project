@@ -1,13 +1,13 @@
 # PROGRAMMER: John Paul Hunter
 # DATE CREATED: Wednesday, January 18, 2023                                 
-# REVISED DATE: 
+# REVISED DATE: Friday, January 20, 2023
 # PURPOSE: Function that performs the prediction  
 
 from process_image import process_image
 
 import torch
 
-def predict_model(image_path, model, topk, this_device):
+def predict_model(input, model, top_k, device):
     ''' Predict the class (or classes) of an image using a trained deep learning model.
     '''
     
@@ -19,20 +19,19 @@ def predict_model(image_path, model, topk, this_device):
     model.double()
 
     # model to gpu if this device suports
-    model = model.to(this_device);
+    model = model.to(device)
     
     # call our process_image func above
-    image = process_image(image_path)
+    image = process_image(input)
     
     # image to this device - unsqueeze the tensor
-    image = image.to(this_device).unsqueeze(0)
+    image = image.to(device).unsqueeze(0)
 
     with torch.no_grad():
-        
         # extract the top-k value-indices
         output = model.forward(image)
-        topk ,topk_labels = torch.topk(output, topk)
-        topk = topk.exp()
+        top_k ,top_k_labels = torch.topk(output, top_k)
+        top_k = top_k.exp()
 
     # pupulate idx_to_class for labels
     idx_to_class = {model.class_to_idx[k]: k for k in model.class_to_idx}
@@ -41,8 +40,8 @@ def predict_model(image_path, model, topk, this_device):
     classes = []
 
     # loop though predictions and populate classes
-    for label in topk_labels.cpu().numpy()[0]:
+    for label in top_k_labels.cpu().numpy()[0]:
         classes.append(idx_to_class[label])
 
     # retun topk and classes array
-    return topk.cpu().numpy()[0], classes
+    return top_k.cpu().numpy()[0], classes
