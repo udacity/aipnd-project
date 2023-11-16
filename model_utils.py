@@ -196,11 +196,10 @@ def predict(model, path_to_image, gpu, top_k):
     idx_to_class = {v: k for k, v in model.class_to_idx.items()}
 
     top_labels = [cat_to_name[idx_to_class[idx]] for idx in classes.cpu().numpy().tolist()[0]]
-
     probabilities = probs.cpu().numpy()[0] * 100
 
     print(f'Flower name: {top_labels[0]} with a probability of {probabilities[0]}')
-    print(f'Top {top_k} most likely classes: ', top_labels)
+    print(f'Top {top_k} most likely classes: ', dict(zip(top_labels, probabilities)))
 
 
 
